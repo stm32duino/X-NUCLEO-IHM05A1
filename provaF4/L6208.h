@@ -136,8 +136,8 @@ L6208(uint8_t flag_and_enable_pin, uint8_t reset_pin, uint8_t direction_pin, uin
 // #else
 //     TIM_TypeDef *Instance = TIM2;
 // #endif
-  TIM_TypeDef *Instance = TIM4;
-  //  TIM_TypeDef *Instance = TIM21;
+    TIM_TypeDef *Instance = TIM4;
+//  TIM_TypeDef *Instance = TIM21;
     Callback<void()>::func = std::bind(&L6208::L6208_TickHandler, this);
     callback_handler = static_cast<TickHandler_Callback>(Callback<void()>::callback);
     
@@ -1130,8 +1130,8 @@ L6208(uint8_t flag_and_enable_pin, uint8_t reset_pin, uint8_t direction_pin, uin
     void L6208_Board_VrefPwmSetPulseWidthA(uint8_t pulseWidthInUs)
     {   
         current_pwm_pulseWidthA = pulseWidthInUs;
-        vrefA_pwm_timer->setMode(vrefA_pwm_channel, TIMER_OUTPUT_COMPARE_PWM1, vrefA_pwm);
-        vrefA_pwm_timer ->setOverflow(current_pwm_periodA, MICROSEC_FORMAT);
+        //vrefA_pwm_timer->setMode(vrefA_pwm_channel, TIMER_OUTPUT_COMPARE_PWM1, vrefA_pwm);
+        //vrefA_pwm_timer ->setOverflow(current_pwm_periodA, MICROSEC_FORMAT);
         vrefA_pwm_timer->setCaptureCompare( vrefA_pwm_channel , current_pwm_pulseWidthA, MICROSEC_COMPARE_FORMAT);
         vrefA_pwm_timer->resume();
     }
@@ -1144,8 +1144,8 @@ L6208(uint8_t flag_and_enable_pin, uint8_t reset_pin, uint8_t direction_pin, uin
     void L6208_Board_VrefPwmSetPulseWidthB(uint8_t pulseWidthInUs)
     {
         current_pwm_pulseWidthB = pulseWidthInUs;
-        vrefB_pwm_timer->setMode(vrefB_pwm_channel, TIMER_OUTPUT_COMPARE_PWM1, vrefB_pwm);
-        vrefB_pwm_timer ->setOverflow(current_pwm_periodB, MICROSEC_FORMAT);
+     //   vrefB_pwm_timer->setMode(vrefB_pwm_channel, TIMER_OUTPUT_COMPARE_PWM1, vrefB_pwm);
+       // vrefB_pwm_timer ->setOverflow(current_pwm_periodB, MICROSEC_FORMAT);
         vrefB_pwm_timer->setCaptureCompare( vrefB_pwm_channel , current_pwm_pulseWidthB, MICROSEC_COMPARE_FORMAT);
         vrefB_pwm_timer->resume();
     
