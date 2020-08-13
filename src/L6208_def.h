@@ -1,5 +1,5 @@
 /******************************************************//**
-  * @file    L6208_def.h 
+  * @file    L6208_def.h
   * @author  IPC Rennes
   * @version V1.1.0
   * @date    February 11th, 2016
@@ -40,19 +40,19 @@
 #define _L6208_H_INCLUDED
 
 #ifdef __cplusplus
- extern "C" {
-#endif 
+extern "C" {
+#endif
 
 /* Includes ------------------------------------------------------------------*/
 #include "L6208_config.h"
-#include "motor_def.h" 
+#include "motor_def.h"
 
 /* Definitions ---------------------------------------------------------------*/
 
 /** @addtogroup Components
  * @{
  */
-    
+
 /** @defgroup L6208
   * @{
   */
@@ -92,7 +92,7 @@
 /// Position range
 #define L6208_POSITION_RANGE         ((uint32_t)(L6208_MAX_POSITION -\
                                                         L6208_MIN_POSITION))
-/// micro step samples per period/4 
+/// micro step samples per period/4
 #define L6208_USTEPS_PER_QUARTER_PERIOD        (16)
 
 /// minimum speed
@@ -134,7 +134,7 @@ typedef enum {
   L6208_ERROR_SET_DIRECTION    = L6208_ERROR_BASE + 10,/// Error while setting direction
   L6208_ERROR_SET_STEP_MODE    = L6208_ERROR_BASE + 11,/// Attempt to set an unsupported step mode
   L6208_ERROR_SET_PWM          = L6208_ERROR_BASE + 12,/// Error while setting a PWM parameter
-}errorTypes_t;
+} errorTypes_t;
 /**
   * @}
   */
@@ -143,8 +143,7 @@ typedef enum {
   * @{
   */
 /// Device Parameters Structure Type
-typedef struct
-{
+typedef struct {
   /// dwelling waiting time counter (tick)
   volatile uint32_t dwellCounter;
   /// motor position indicator (tick)
@@ -173,9 +172,9 @@ typedef struct
   volatile uint16_t moveDwellTime;
   /// number of micro stepping waveform samples to be rescaled according to selected torque value
   volatile uint8_t uStepsample2scale;
-  /// number of micro stepping waveform samples to be updated into the waveform scanning table  
+  /// number of micro stepping waveform samples to be updated into the waveform scanning table
   volatile uint8_t uStepsample2update;
-  /// microstepping waveform sample index  
+  /// microstepping waveform sample index
   volatile uint8_t uStepSample;
   /// system status flags
   volatile uint32_t flags;
@@ -229,16 +228,15 @@ typedef struct
   volatile uint32_t maxSpeedSpt;
   /// minimum speed (steps/tick)
   volatile uint32_t minSpeedSpt;
-  /// current speed (steps/tick) 
+  /// current speed (steps/tick)
   volatile uint32_t speedSpt;
-}deviceParams_t;
+} deviceParams_t;
 /**
   * @}
   */
 
-/// Motor driver initialization structure definition  
-typedef struct
-{
+/// Motor driver initialization structure definition
+typedef struct {
   /// acceleration (steps/s^2)
   uint16_t accelerationSps2;
   /// acceleration phase torque value (%)
@@ -283,7 +281,7 @@ extern void L6208_Board_DisableIrq(void);
 extern bool L6208_Board_VrefPwmInit(uint8_t bridgeId, uint32_t pwmFreq);
 ///Initialize the tick
 extern void L6208_Board_TickInit(void);
-///Release the reset pin 
+///Release the reset pin
 extern void L6208_Board_Releasereset(void);
 ///Set the reset pin
 extern void L6208_Board_reset(void);
@@ -311,19 +309,19 @@ extern void L6208_Board_disable(void);
   * @}
   */
 
-  /**
-  * @}
-  */
+/**
+* @}
+*/
 
 /**
   * @}
   */
-  
+
 #ifdef __cplusplus
-  }
+}
 #endif
 
 #endif /* __L6208_H */
 
 /******************* (C) COPYRIGHT 2016 STMicroelectronics *****END OF FILE****/
- 
+

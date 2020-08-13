@@ -1,5 +1,5 @@
 /******************************************************//**
-  * @file    L6208_config.h 
+  * @file    L6208_config.h
   * @author  IPC Rennes
   * @version V1.1.0
   * @date    February 11th, 2016
@@ -40,8 +40,8 @@
 #define __L6208_CONFIG_H
 
 #ifdef __cplusplus
- extern "C" {
-#endif 
+extern "C" {
+#endif
 
 /** @addtogroup L6208
   * @{
@@ -104,9 +104,9 @@
   */
 
 #ifdef __cplusplus
-  }
+}
 #endif
 
 #endif /* __L6208_CONFIG_H */
 
-/******************* (C) COPYRIGHT 2016 STMicroelectronics *****END OF FILE****/ 
+/******************* (C) COPYRIGHT 2016 STMicroelectronics *****END OF FILE****/
