@@ -54,7 +54,7 @@
  * An abstract class for Generic components.
  */
 class Component {
-  public:
+public:
 
     /**
      * @brief     Initializing the component.
@@ -79,4 +79,4 @@ class Component {
 #endif /* __COMPONENT_CLASS_H */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
-
+ 
