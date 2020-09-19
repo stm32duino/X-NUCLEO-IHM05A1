@@ -47,28 +47,27 @@
 #define SerialPort Serial
 
 #if defined(ARDUINO_NUCLEO_F401RE) || defined(ARDUINO_NUCLEO_L152RE) || defined(ARDUINO_NUCLEO_L476RG)
-#define VREFA_PWM_PIN D3
-#define VREFB_PWM_PIN D9
-#define TICKER_INSTANCE TIM5
+  #define VREFA_PWM_PIN D3
+  #define VREFB_PWM_PIN D9
+  #define TICKER_INSTANCE TIM5
 #elif defined(ARDUINO_NUCLEO_L053R8)
-#define VREFA_PWM_PIN D3
-#define VREFB_PWM_PIN D9
-#define TICKER_INSTANCE TIM21
+  #define VREFA_PWM_PIN D3
+  #define VREFB_PWM_PIN D9
+  #define TICKER_INSTANCE TIM21
 #else
-#error "Target board not tested! Please, comment this line and define the good pins for VrefA and VrefB and a good instance for the Ticker Hardware Timer"
-/* Like for example */
-/*
-#define VREFA_PWM_PIN D3
-#define VREFB_PWM_PIN D9
-#define TICKER_INSTANCE TIM1
-*/
+  #error "Target board not tested! Please, comment this line and define the good pins for VrefA and VrefB and a good instance for the Ticker Hardware Timer"
+  /* Like for example */
+  /*
+  #define VREFA_PWM_PIN D3
+  #define VREFB_PWM_PIN D9
+  #define TICKER_INSTANCE TIM1
+  */
 #endif
 
 /* Variables -----------------------------------------------------------------*/
 
 /* Initialization parameters of the motor connected to the expansion board. */
-l6208_init_t init_s =
-{
+l6208_init_t init_s = {
   1500,            //Acceleration rate in step/s^2 or (1/16)th step/s^2 for microstep modes
   20,              //Acceleration current torque in % (from 0 to 100)
   1500,            //Deceleration rate in step/s^2 or (1/16)th step/s^2 for microstep modes
@@ -116,9 +115,8 @@ void my_error_handler(uint16_t error)
   SerialPort.print(report);
 
   /* Infinite loop */
-  while(1)
-  {
-  }    
+  while (1) {
+  }
 }
 
 void setup()
@@ -135,11 +133,11 @@ void setup()
     exit(EXIT_FAILURE);
   }
 
-    /* Attaching and enabling an interrupt handler. */
+  /* Attaching and enabling an interrupt handler. */
   motor->attach_flag_irq(&my_flag_irq_handler);
   motor->enable_flag_irq();
 
-    /* Attaching an error handler */
+  /* Attaching an error handler */
   motor->attach_error_handler(&my_error_handler);
   /* Printing to the console. */
   SerialPort.println("Motor Control Application Example for 1 Motor\r\n");
@@ -169,11 +167,11 @@ void setup()
   pos = motor->get_position();
   SerialPort.print("Position: ");
   SerialPort.println(pos);
-  
+
   /* Set the current position to be the Home position */
   Serial.println("Set the current position to be the Home position.");
   motor->set_home(pos);
-  
+
   /* Wait for 2 seconds */
   delay(2000);
 
@@ -181,8 +179,8 @@ void setup()
 
   /* Request to go to position -6400 */
   Serial.println("Go to position -6400.");
-  motor->go_to(-6400);  
-  
+  motor->go_to(-6400);
+
   /* Wait for the motor ends moving */
   motor->wait_while_active();
 
@@ -190,37 +188,36 @@ void setup()
   pos = motor->get_position();
   SerialPort.print("Position: ");
   SerialPort.println(pos);
-  
-  if (pos != -6400) 
-  {
+
+  if (pos != -6400) {
     my_error_handler(L6208_ERROR_POSITION);
   }
-  
+
   /* Get current position */
   pos = motor->get_position();
   SerialPort.print("Position: ");
   SerialPort.println(pos);
-  
-  
+
+
   /* Set the current position to be the Mark position */
   SerialPort.println("Set the current position to be the Mark position.");
   motor->set_mark(pos);
 
   /* Wait for 2 seconds */
   delay(2000);
-  
+
   //----- Go Home
 
   /* Request to go to Home */
   Serial.println("Go Home.");
-  motor->go_home();  
+  motor->go_home();
   motor->wait_while_active();
 
   /* Get current position */
   pos = motor->get_position();
   SerialPort.print("Position: ");
   SerialPort.println(pos);
-  
+
   /* Wait for 2 seconds */
   delay(2000);
 
@@ -229,7 +226,7 @@ void setup()
   /* Request to go to position 6400 */
   SerialPort.println("Go to position 6400.");
   motor->go_to(StepperMotor::FWD, 6400);
-  
+
   /* Wait for the motor ends moving */
   motor->wait_while_active();
 
@@ -239,13 +236,13 @@ void setup()
   SerialPort.println(pos);
   /* Wait for 2 seconds */
   delay(2000);
-  
+
   //----- Go Mark which was set previously after go to -6400
 
   /* Request to go to Mark position */
   SerialPort.println("Go to Mark position.");
-  motor->go_mark();  
-  
+  motor->go_mark();
+
   /* Wait for the motor ends moving */
   motor->wait_while_active();
 
@@ -253,20 +250,20 @@ void setup()
   pos = motor->get_position();
   SerialPort.print("Position: ");
   SerialPort.println(pos);
-  
+
   /* Wait for 2 seconds */
   delay(2000);
 
   //----- Run the motor BACKWARD
 
   /* Request to run BACKWARD */
-   SerialPort.println("Run BACKWARD.");
-   motor->run(StepperMotor::BWD);       
-   delay(5000);
+  SerialPort.println("Run BACKWARD.");
+  motor->run(StepperMotor::BWD);
+  delay(5000);
 
-   /* Get current speed */
-   mySpeed = motor->get_speed();
-   
+  /* Get current speed */
+  mySpeed = motor->get_speed();
+
 
   //----- Increase the speed while running
 
@@ -275,7 +272,7 @@ void setup()
   delay(5000);
 
   /* Get current speed */
-  mySpeed = motor->get_speed(); 
+  mySpeed = motor->get_speed();
   SerialPort.print("Speed: ");
   SerialPort.println(mySpeed);
   //----- Decrease the speed while running
@@ -288,7 +285,7 @@ void setup()
   /* Get current speed */
   mySpeed = motor->get_speed();
   SerialPort.print("Speed: ");
-  
+
   SerialPort.println(mySpeed);
   //----- Increase acceleration while running
 
@@ -306,9 +303,8 @@ void setup()
   mySpeed = motor->get_speed();
   SerialPort.print("Speed: ");
   SerialPort.println(mySpeed);
-  
-  if (mySpeed != 2400)
-  {
+
+  if (mySpeed != 2400) {
     my_error_handler(L6208_ERROR_SPEED);
   }
 
@@ -328,14 +324,14 @@ void setup()
   mySpeed = motor->get_speed();
   SerialPort.print("Speed: ");
   SerialPort.println(mySpeed);
-  
+
   //----- Soft stopped required while running
 
   /* Request soft stop */
   SerialPort.println("soft stop.");
   motor->soft_stop();
 
-  /* Wait for the motor ends moving */  
+  /* Wait for the motor ends moving */
   motor->wait_while_active();
 
   /* Wait for 2 seconds */
@@ -345,9 +341,9 @@ void setup()
 
   /* Request to run in FORWARD direction */
   SerialPort.println("Run in FORWARD direction.");
-  motor->run(StepperMotor::FWD);       
+  motor->run(StepperMotor::FWD);
   delay(5000);
-  
+
   /* Request to immediatly stop */
   SerialPort.println("immediatly stop.");
   motor->hard_stop();
@@ -355,12 +351,12 @@ void setup()
 
   /* Wait for 2 seconds */
   delay(2000);
-  
+
   //----- GOTO stopped by softstop
 
   /* Request to go to position 20000  */
   SerialPort.println("Go to position 20000.");
-  motor->go_to(20000);  
+  motor->go_to(20000);
   delay(5000);
 
   /* Request to perform a soft stop */
@@ -369,7 +365,7 @@ void setup()
   motor->wait_while_active();
 
   /* Wait for 2 seconds */
-  delay(2000);  
+  delay(2000);
 
   //----- Change step mode to full step mode
 
@@ -380,11 +376,11 @@ void setup()
   /* Set speed, acceleration and deceleration to scale with normal mode */
   /* For normal mode and half step mode, these parameters are in steps/s or /s^2 */
   /* For microstep modes, these parameters are either in (1/16)step/s or /s^2 */
-  motor->set_max_speed((motor->get_max_speed())>>4);
+  motor->set_max_speed((motor->get_max_speed()) >> 4);
   motor->set_min_speed(L6208_MIN_SPEED);
-  motor->set_acceleration((motor->get_acceleration())>>4);
-  motor->set_deceleration((motor->get_deceleration())>>4);
-  
+  motor->set_acceleration((motor->get_acceleration()) >> 4);
+  motor->set_deceleration((motor->get_deceleration()) >> 4);
+
   /* Request to go position 200 (full steps) */
   SerialPort.println("Go position 200 (full steps).");
   motor->go_to(200);
@@ -396,22 +392,21 @@ void setup()
   pos =  motor->get_position();
   SerialPort.print("Position: ");
   SerialPort.println(pos);
-  if (pos != 200) 
-  {
+  if (pos != 200) {
     my_error_handler(L6208_ERROR_POSITION);
   }
-  
+
   /* Wait for 2 seconds */
   delay(2000);
 
-  //----- Change step mode to half step mode  
+  //----- Change step mode to half step mode
   /* Select half step mode */
   SerialPort.println("Select half step mode.");
   motor->set_step_mode(StepperMotor::STEP_MODE_HALF);
-  
+
   /* Request to go position -400 (half steps) */
   SerialPort.println("go position -400 (half steps).");
-  motor->go_to(-400);  
+  motor->go_to(-400);
 
   /* Wait for the motor ends moving */
   motor->wait_while_active();
@@ -420,16 +415,15 @@ void setup()
   pos =  motor->get_position();
   SerialPort.print("Position: ");
   SerialPort.println(pos);
-  
-  if (pos != -400) 
-  {
+
+  if (pos != -400) {
     my_error_handler(L6208_ERROR_POSITION);
   }
-  
+
   /* Wait for 2 seconds */
   delay(2000);
 
-  //----- Change step mode 1/4 microstepping mode  
+  //----- Change step mode 1/4 microstepping mode
   /* Select 1/4 step mode */
   SerialPort.println("Select 1/4 step mode.");
   motor->set_step_mode(StepperMotor::STEP_MODE_1_4);
@@ -437,14 +431,14 @@ void setup()
   /* Set speed, acceleration and deceleration to scale with microstep mode */
   /* For normal mode and half step mode, these parameters are in steps/s or /s^2 */
   /* For microstep modes, these parameters are either in (1/16)step/s or /s^2 */
-  motor->set_max_speed((motor->get_max_speed())<<4);
+  motor->set_max_speed((motor->get_max_speed()) << 4);
   motor->set_min_speed(L6208_MIN_SPEED);
-  motor->set_acceleration((motor->get_acceleration())<<4);
-  motor->set_deceleration((motor->get_deceleration())<<4);
-  
+  motor->set_acceleration((motor->get_acceleration()) << 4);
+  motor->set_deceleration((motor->get_deceleration()) << 4);
+
   /* Request to go position 800 (quarter steps) */
   SerialPort.println("Go position 800 (quarter steps).");
-  motor->go_to(800);  
+  motor->go_to(800);
 
   /* Wait for the motor ends moving */
   motor->wait_while_active();
@@ -453,23 +447,22 @@ void setup()
   pos =  motor->get_position();
   SerialPort.print("Position: ");
   SerialPort.println(pos);
-  
-  if (pos != 800) 
-  {
+
+  if (pos != 800) {
     my_error_handler(L6208_ERROR_POSITION);
   }
-  
+
   /* Wait for 2 seconds */
   delay(2000);
 
-  //----- Change step mode 1/8 microstepping mode  
+  //----- Change step mode 1/8 microstepping mode
   /* Select 1/8 step mode */
   SerialPort.println("Select 1/8 step mode.");
   motor->set_step_mode(StepperMotor::STEP_MODE_1_8);
-  
+
   /* Request to go position -1600 (1/8th steps) */
   SerialPort.println("Go position -1600 (1/8th steps).");
-  motor->go_to(-1600);  
+  motor->go_to(-1600);
 
   /* Wait for the motor ends moving */
   motor->wait_while_active();
@@ -478,21 +471,20 @@ void setup()
   pos =  motor->get_position();
   SerialPort.print("Position: ");
   SerialPort.println(pos);
-  
-  if (pos != -1600) 
-  {
+
+  if (pos != -1600) {
     my_error_handler(L6208_ERROR_POSITION);
   }
 
   /* Wait for 2 seconds */
   delay(2000);
-  
+
   //----- Restore 1/16 microstepping mode
 
   /* Reset device to 1/16 microstepping mode */
   SerialPort.println("Reset device to 1/16 microstepping mode.");
   motor->set_step_mode(StepperMotor::STEP_MODE_1_16);
-  
+
   /* Set speed and acceleration at lowest values */
   motor->set_max_speed(L6208_MIN_SPEED);
   motor->set_acceleration(L6208_MIN_ACC_DEC_RATE);
@@ -501,18 +493,17 @@ void setup()
   /* Move device 49 microsteps (1/16th steps) in the FORWARD direction*/
   SerialPort.println("Move device 49 microsteps (1/16th steps) in the FORWARD direction.");
   motor->move(StepperMotor::FWD, 49);
-  
+
   /* Wait for the motor ends moving */
   SerialPort.println("Wait for the motor ends moving.");
   motor->wait_while_active();
-  
+
   /* Get current position */
   pos =  motor->get_position();
   SerialPort.print("Position: ");
   SerialPort.println(pos);
-  
-  if (pos != 49) 
-  {
+
+  if (pos != 49) {
     my_error_handler(L6208_ERROR_POSITION);
   }
 
@@ -522,13 +513,13 @@ void setup()
   motor->set_deceleration(L6208_CONF_PARAM_DEC_RATE);
 
   /* Turn off power bridges when motor is stopped */
-  
+
   motor->set_stop_mode(HIZ_MODE);
 
   SerialPort.println("--> Infinite Loop...\r\n");
- 
+
 }
- 
+
 
 
 /* loop ----------------------------------------------------------------------*/
@@ -537,16 +528,14 @@ void loop()
 {
   /* Request to run */
   SerialPort.println("Run.");
-  if(motor->get_direction() == StepperMotor::FWD)
-  {
+  if (motor->get_direction() == StepperMotor::FWD) {
     motor->run(StepperMotor::BWD);
-  }else
-  {
+  } else {
     motor->run(StepperMotor::FWD);
   }
 
   delay(5000);
-  
+
   /* Request soft stop */
   SerialPort.println("Soft stop.");
   motor->soft_stop();

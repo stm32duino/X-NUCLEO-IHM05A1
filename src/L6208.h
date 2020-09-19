@@ -1,4 +1,4 @@
-/**
+v87/**
  ******************************************************************************
  * @file    L6208.h
  * @author  IPC Rennes
@@ -47,12 +47,12 @@
 
 /* ACTION 1 ------------------------------------------------------------------*
  * Include here platform specific header files.                               *
- *----------------------------------------------------------------------------*/        
+ *----------------------------------------------------------------------------*/
 #include "Arduino.h"
 
 /* ACTION 2 ------------------------------------------------------------------*
  * Include here component specific header files.                              *
- *----------------------------------------------------------------------------*/        
+ *----------------------------------------------------------------------------*/
 #include "L6208_def.h"
 /* ACTION 3 ------------------------------------------------------------------*
  * Include here interface specific header files.                              *
@@ -69,11 +69,12 @@ struct Callback;
 
 template <typename Ret, typename... Params>
 struct Callback<Ret(Params...)> {
-   template <typename... Args>
-   static Ret callback(Args... args) {
-      return func(args...);
-   }
-   static std::function<Ret(Params...)> func;
+  template <typename... Args>
+  static Ret callback(Args... args)
+  {
+    return func(args...);
+  }
+  static std::function<Ret(Params...)> func;
 };
 
 template <typename Ret, typename... Params>
@@ -87,9 +88,8 @@ typedef void (*TickHandler_Callback)(void);
  * @brief Class representing a L6208 component.
  */
 
-class L6208 : public StepperMotor
-{
-public:
+class L6208 : public StepperMotor {
+  public:
     /*** Constructor and Destructor Methods ***/
 
     /**
@@ -104,63 +104,63 @@ public:
      * @param vrefB_pwm_pin         pin name of the PWM connected to the VREFB pin of the component.
      */
 
-L6208(uint8_t flag_and_enable_pin, uint8_t reset_pin, uint8_t direction_pin, uint8_t half_full_pin, uint8_t control_pin, uint8_t clock_pin, uint8_t vrefA_pwm_pin, uint8_t vrefB_pwm_pin, TIM_TypeDef *ticker_instance) : StepperMotor(),
-                                                                                                                                                         flag_and_enable(flag_and_enable_pin),
-                                                                                                                                                         reset_pin(reset_pin),
-                                                                                                                                                         direction_pin(direction_pin),
-                                                                                                                                                         half_full_pin(half_full_pin),
-                                                                                                                                                         control_pin(control_pin),
-                                                                                                                                                         clock_pin(clock_pin),
-                                                                                                                                                         vrefA_pwm(vrefA_pwm_pin),
-                                                                                                                                                         vrefB_pwm(vrefB_pwm_pin),
-                                                                                                                                                         ticker_instance(ticker_instance)
-{
-    pinMode(flag_and_enable,OUTPUT);
-    pinMode(reset_pin, OUTPUT);
-    pinMode(direction_pin, OUTPUT);
-    pinMode(control_pin, OUTPUT);
-    pinMode(clock_pin, OUTPUT);
-	pinMode(vrefA_pwm, OUTPUT);
-	pinMode(vrefB_pwm, OUTPUT);
-    
-    Callback<void()>::func = std::bind(&L6208::L6208_TickHandler, this);
-    callback_handler = static_cast<TickHandler_Callback>(Callback<void()>::callback);
-    
-    vrefA_pwm_instance = (TIM_TypeDef *)pinmap_peripheral(digitalPinToPinName(vrefA_pwm), PinMap_PWM);
-    vrefA_pwm_channel = STM_PIN_CHANNEL(pinmap_function(digitalPinToPinName(vrefA_pwm), PinMap_PWM));
-    
-    vrefB_pwm_instance = (TIM_TypeDef *)pinmap_peripheral(digitalPinToPinName(vrefB_pwm), PinMap_PWM);
-    vrefB_pwm_channel = STM_PIN_CHANNEL(pinmap_function(digitalPinToPinName(vrefB_pwm), PinMap_PWM));
+    L6208(uint8_t flag_and_enable_pin, uint8_t reset_pin, uint8_t direction_pin, uint8_t half_full_pin, uint8_t control_pin, uint8_t clock_pin, uint8_t vrefA_pwm_pin, uint8_t vrefB_pwm_pin, TIM_TypeDef *ticker_instance) : StepperMotor(),
+      flag_and_enable(flag_and_enable_pin),
+      reset_pin(reset_pin),
+      direction_pin(direction_pin),
+      half_full_pin(half_full_pin),
+      control_pin(control_pin),
+      clock_pin(clock_pin),
+      vrefA_pwm(vrefA_pwm_pin),
+      vrefB_pwm(vrefB_pwm_pin),
+      ticker_instance(ticker_instance)
+    {
+      pinMode(flag_and_enable, OUTPUT);
+      pinMode(reset_pin, OUTPUT);
+      pinMode(direction_pin, OUTPUT);
+      pinMode(control_pin, OUTPUT);
+      pinMode(clock_pin, OUTPUT);
+      pinMode(vrefA_pwm, OUTPUT);
+      pinMode(vrefB_pwm, OUTPUT);
 
-    vrefA_pwm_timer = new HardwareTimer(vrefA_pwm_instance);
-    vrefA_pwm_timer->setMode(vrefA_pwm_channel, TIMER_OUTPUT_COMPARE_PWM1, vrefA_pwm_pin);
-    vrefA_pwm_timer ->setOverflow(L6208_CONF_VREF_PWM_FREQUENCY, HERTZ_FORMAT);
-    vrefA_pwm_timer->setCaptureCompare( vrefA_pwm_channel , 0, TICK_COMPARE_FORMAT);
-    
-    vrefB_pwm_timer = new HardwareTimer(vrefB_pwm_instance);
-    vrefB_pwm_timer->setMode(vrefB_pwm_channel, TIMER_OUTPUT_COMPARE_PWM1, vrefB_pwm_pin);
-    vrefB_pwm_timer ->setOverflow(L6208_CONF_VREF_PWM_FREQUENCY, HERTZ_FORMAT);
-    vrefB_pwm_timer->setCaptureCompare( vrefB_pwm_channel , 0, TICK_COMPARE_FORMAT);
+      Callback<void()>::func = std::bind(&L6208::L6208_TickHandler, this);
+      callback_handler = static_cast<TickHandler_Callback>(Callback<void()>::callback);
 
-    ticker = new HardwareTimer(ticker_instance);
-    
-    errorHandlerCallback = 0;
-    memset(&device_prm, 0, sizeof(deviceParams_t));
-    deviceInstance = numberOfDevices++;
-    tickFreq = TIMER_TICK_FREQUENCY;
-    pMicroTable2 = &(microTable1[16]);
-}
+      vrefA_pwm_instance = (TIM_TypeDef *)pinmap_peripheral(digitalPinToPinName(vrefA_pwm), PinMap_PWM);
+      vrefA_pwm_channel = STM_PIN_CHANNEL(pinmap_function(digitalPinToPinName(vrefA_pwm), PinMap_PWM));
 
-   /**
-     * @brief Destructor.
-     */
+      vrefB_pwm_instance = (TIM_TypeDef *)pinmap_peripheral(digitalPinToPinName(vrefB_pwm), PinMap_PWM);
+      vrefB_pwm_channel = STM_PIN_CHANNEL(pinmap_function(digitalPinToPinName(vrefB_pwm), PinMap_PWM));
+
+      vrefA_pwm_timer = new HardwareTimer(vrefA_pwm_instance);
+      vrefA_pwm_timer->setMode(vrefA_pwm_channel, TIMER_OUTPUT_COMPARE_PWM1, vrefA_pwm_pin);
+      vrefA_pwm_timer ->setOverflow(L6208_CONF_VREF_PWM_FREQUENCY, HERTZ_FORMAT);
+      vrefA_pwm_timer->setCaptureCompare(vrefA_pwm_channel, 0, TICK_COMPARE_FORMAT);
+
+      vrefB_pwm_timer = new HardwareTimer(vrefB_pwm_instance);
+      vrefB_pwm_timer->setMode(vrefB_pwm_channel, TIMER_OUTPUT_COMPARE_PWM1, vrefB_pwm_pin);
+      vrefB_pwm_timer ->setOverflow(L6208_CONF_VREF_PWM_FREQUENCY, HERTZ_FORMAT);
+      vrefB_pwm_timer->setCaptureCompare(vrefB_pwm_channel, 0, TICK_COMPARE_FORMAT);
+
+      ticker = new HardwareTimer(ticker_instance);
+
+      errorHandlerCallback = 0;
+      memset(&device_prm, 0, sizeof(deviceParams_t));
+      deviceInstance = numberOfDevices++;
+      tickFreq = TIMER_TICK_FREQUENCY;
+      pMicroTable2 = &(microTable1[16]);
+    }
+
+    /**
+      * @brief Destructor.
+      */
     virtual  ~L6208(void)
-	{
-       free( vrefA_pwm_timer);
-       free( vrefB_pwm_timer);
+    {
+      free(vrefA_pwm_timer);
+      free(vrefB_pwm_timer);
 
-	}
-    
+    }
+
     /*** Public Component Related Methods ***/
     /**
      * @brief Public functions inherited from the Component Class
@@ -174,22 +174,22 @@ L6208(uint8_t flag_and_enable_pin, uint8_t reset_pin, uint8_t direction_pin, uin
 
     virtual int init(void *init = NULL)
     {
-        return (int) L6208_Init((void *) init);
+      return (int) L6208_Init((void *) init);
     }
 
-        /**
-     * @brief  Getting the ID of the component.
-     * @param  id Pointer to an allocated variable to store the ID into.
-     * @retval "0" in case of success, an error code otherwise.
-     */
+    /**
+    * @brief  Getting the ID of the component.
+    * @param  id Pointer to an allocated variable to store the ID into.
+    * @retval "0" in case of success, an error code otherwise.
+    */
     virtual int read_id(uint8_t *id = NULL)
     {
-        return (int) L6208_ReadID((uint8_t *) id);
+      return (int) L6208_ReadID((uint8_t *) id);
     }
 
-      virtual unsigned int get_status(void)
+    virtual unsigned int get_status(void)
     {
-        return (unsigned int) L6208_GetMotionState();
+      return (unsigned int) L6208_GetMotionState();
     }
 
     /**
@@ -199,7 +199,7 @@ L6208(uint8_t flag_and_enable_pin, uint8_t reset_pin, uint8_t direction_pin, uin
      */
     virtual signed int get_position(void)
     {
-        return (signed int)L6208_GetPosition();
+      return (signed int)L6208_GetPosition();
     }
 
     /**
@@ -209,7 +209,7 @@ L6208(uint8_t flag_and_enable_pin, uint8_t reset_pin, uint8_t direction_pin, uin
      */
     virtual signed int get_mark(void)
     {
-        return (signed int)L6208_GetMark();
+      return (signed int)L6208_GetMark();
     }
 
     /**
@@ -219,7 +219,7 @@ L6208(uint8_t flag_and_enable_pin, uint8_t reset_pin, uint8_t direction_pin, uin
      */
     virtual unsigned int get_speed(void)
     {
-        return (unsigned int)L6208_GetCurrentSpeed();
+      return (unsigned int)L6208_GetCurrentSpeed();
     }
     /**
      * @brief  Getting the maximum speed in pps.
@@ -228,7 +228,7 @@ L6208(uint8_t flag_and_enable_pin, uint8_t reset_pin, uint8_t direction_pin, uin
      */
     virtual unsigned int get_max_speed(void)
     {
-        return (unsigned int)L6208_GetMaxSpeed();
+      return (unsigned int)L6208_GetMaxSpeed();
     }
 
     /**
@@ -238,7 +238,7 @@ L6208(uint8_t flag_and_enable_pin, uint8_t reset_pin, uint8_t direction_pin, uin
      */
     virtual unsigned int get_min_speed(void)
     {
-        return (unsigned int)L6208_GetMinSpeed();
+      return (unsigned int)L6208_GetMinSpeed();
     }
 
     /**
@@ -248,7 +248,7 @@ L6208(uint8_t flag_and_enable_pin, uint8_t reset_pin, uint8_t direction_pin, uin
      */
     virtual unsigned int get_acceleration(void)
     {
-        return (unsigned int)L6208_GetAcceleration();
+      return (unsigned int)L6208_GetAcceleration();
     }
 
     /**
@@ -258,9 +258,9 @@ L6208(uint8_t flag_and_enable_pin, uint8_t reset_pin, uint8_t direction_pin, uin
      */
     virtual unsigned int get_deceleration(void)
     {
-        return (unsigned int)L6208_GetDeceleration();
+      return (unsigned int)L6208_GetDeceleration();
     }
-    
+
     /**
      * @brief  Getting the direction of rotation.
      * @param  None.
@@ -268,16 +268,13 @@ L6208(uint8_t flag_and_enable_pin, uint8_t reset_pin, uint8_t direction_pin, uin
      */
     virtual direction_t get_direction(void)
     {
-        if (L6208_GetDirection()!=BACKWARD)
-        {
-            return FWD;
-        }
-        else
-        {
-            return BWD;
-        }
+      if (L6208_GetDirection() != BACKWARD) {
+        return FWD;
+      } else {
+        return BWD;
+      }
     }
-    
+
     /**
      * @brief  Setting the current position to be the home position.
      * @param  None.
@@ -285,12 +282,12 @@ L6208(uint8_t flag_and_enable_pin, uint8_t reset_pin, uint8_t direction_pin, uin
      */
     virtual void set_home(void)
     {
-        L6208_SetHome();
+      L6208_SetHome();
     }
-	
-	void set_home(int32_t homePos)
+
+    void set_home(int32_t homePos)
     {
-        L6208_SetHome(homePos);
+      L6208_SetHome(homePos);
     }
 
     /**
@@ -300,12 +297,12 @@ L6208(uint8_t flag_and_enable_pin, uint8_t reset_pin, uint8_t direction_pin, uin
      */
     virtual void set_mark(void)
     {
-        L6208_SetMark();
+      L6208_SetMark();
     }
 
     void set_mark(int32_t markPos)
     {
-        L6208_SetMark(markPos);
+      L6208_SetMark(markPos);
     }
 
     /**
@@ -315,14 +312,11 @@ L6208(uint8_t flag_and_enable_pin, uint8_t reset_pin, uint8_t direction_pin, uin
      */
     virtual bool set_max_speed(unsigned int speed)
     {
-        if (speed <= 0xFFFF)
-        {
-            return L6208_SetMaxSpeed((uint16_t) speed);
-        }
-        else
-        {
-            return false;
-        }
+      if (speed <= 0xFFFF) {
+        return L6208_SetMaxSpeed((uint16_t) speed);
+      } else {
+        return false;
+      }
     }
 
     /**
@@ -332,14 +326,11 @@ L6208(uint8_t flag_and_enable_pin, uint8_t reset_pin, uint8_t direction_pin, uin
      */
     virtual bool set_min_speed(unsigned int speed)
     {
-        if (speed <= 0xFFFF)
-        {
-            return L6208_SetMinSpeed((uint16_t) speed);
-        }
-        else
-        {
-            return false;
-        }
+      if (speed <= 0xFFFF) {
+        return L6208_SetMinSpeed((uint16_t) speed);
+      } else {
+        return false;
+      }
     }
 
     /**
@@ -349,14 +340,11 @@ L6208(uint8_t flag_and_enable_pin, uint8_t reset_pin, uint8_t direction_pin, uin
      */
     virtual bool set_acceleration(unsigned int acceleration)
     {
-        if (acceleration <= 0xFFFF)
-        {
-            return L6208_SetAcceleration((uint16_t) acceleration);
-        }
-        else
-        {
-            return false;
-        }
+      if (acceleration <= 0xFFFF) {
+        return L6208_SetAcceleration((uint16_t) acceleration);
+      } else {
+        return false;
+      }
     }
 
     /**
@@ -366,14 +354,11 @@ L6208(uint8_t flag_and_enable_pin, uint8_t reset_pin, uint8_t direction_pin, uin
      */
     virtual bool set_deceleration(unsigned int deceleration)
     {
-        if (deceleration <= 0xFFFF)
-        {
-            return L6208_SetDeceleration((uint16_t) deceleration);
-        }
-        else
-        {
-            return false;
-        }
+      if (deceleration <= 0xFFFF) {
+        return L6208_SetDeceleration((uint16_t) deceleration);
+      } else {
+        return false;
+      }
     }
 
     /**
@@ -390,7 +375,7 @@ L6208(uint8_t flag_and_enable_pin, uint8_t reset_pin, uint8_t direction_pin, uin
      */
     virtual bool set_step_mode(step_mode_t step_mode)
     {
-        return L6208_SetStepMode((motorStepMode_t) step_mode);
+      return L6208_SetStepMode((motorStepMode_t) step_mode);
     }
 
     /**
@@ -400,7 +385,7 @@ L6208(uint8_t flag_and_enable_pin, uint8_t reset_pin, uint8_t direction_pin, uin
      */
     virtual void go_to(signed int position)
     {
-        L6208_GoTo((int32_t)position);
+      L6208_GoTo((int32_t)position);
     }
 
     /**
@@ -410,7 +395,7 @@ L6208(uint8_t flag_and_enable_pin, uint8_t reset_pin, uint8_t direction_pin, uin
      */
     virtual void go_home(void)
     {
-        L6208_GoHome();
+      L6208_GoHome();
     }
 
     /**
@@ -420,7 +405,7 @@ L6208(uint8_t flag_and_enable_pin, uint8_t reset_pin, uint8_t direction_pin, uin
      */
     virtual void go_mark(void)
     {
-        L6208_GoMark();
+      L6208_GoMark();
     }
 
     /**
@@ -430,10 +415,10 @@ L6208(uint8_t flag_and_enable_pin, uint8_t reset_pin, uint8_t direction_pin, uin
      */
     virtual void run(direction_t direction)
     {
-        L6208_Run((motorDir_t) (direction == StepperMotor::FWD ? FORWARD : BACKWARD));
+      L6208_Run((motorDir_t)(direction == StepperMotor::FWD ? FORWARD : BACKWARD));
     }
-    
- 
+
+
     /**
      * @brief  Moving the motor towards a specified direction for a certain number of steps.
      * @param  direction The direction of rotation.
@@ -442,7 +427,7 @@ L6208(uint8_t flag_and_enable_pin, uint8_t reset_pin, uint8_t direction_pin, uin
      */
     virtual void move(direction_t direction, unsigned int steps)
     {
-        L6208_Move((motorDir_t) (direction == StepperMotor::FWD ? FORWARD : BACKWARD), (uint32_t)steps);
+      L6208_Move((motorDir_t)(direction == StepperMotor::FWD ? FORWARD : BACKWARD), (uint32_t)steps);
     }
 
     /**
@@ -452,7 +437,7 @@ L6208(uint8_t flag_and_enable_pin, uint8_t reset_pin, uint8_t direction_pin, uin
      */
     virtual void soft_stop(void)
     {
-        L6208_SoftStop();
+      L6208_SoftStop();
     }
 
     /**
@@ -462,26 +447,23 @@ L6208(uint8_t flag_and_enable_pin, uint8_t reset_pin, uint8_t direction_pin, uin
      */
     virtual void hard_stop(void)
     {
-        L6208_HardStop();
+      L6208_HardStop();
     }
-        /**
-     * @brief  Disabling the power bridge after performing a deceleration to zero.
-     * @param  None.
-     * @retval None.
-     */
+    /**
+    * @brief  Disabling the power bridge after performing a deceleration to zero.
+    * @param  None.
+    * @retval None.
+    */
     virtual void soft_hiz(void)
     {
-        motorStopMode_t stopMode = L6208_GetStopMode();
-        if (stopMode==HIZ_MODE)
-        {
-            L6208_SoftStop();
-        }
-        else
-        {
-            L6208_SetStopMode(HIZ_MODE);
-            L6208_SoftStop();
-            L6208_SetStopMode(stopMode);
-        }
+      motorStopMode_t stopMode = L6208_GetStopMode();
+      if (stopMode == HIZ_MODE) {
+        L6208_SoftStop();
+      } else {
+        L6208_SetStopMode(HIZ_MODE);
+        L6208_SoftStop();
+        L6208_SetStopMode(stopMode);
+      }
     }
 
     /**
@@ -491,7 +473,7 @@ L6208(uint8_t flag_and_enable_pin, uint8_t reset_pin, uint8_t direction_pin, uin
      */
     virtual void hard_hiz(void)
     {
-        L6208_HardHiZ();
+      L6208_HardHiZ();
     }
 
     /**
@@ -501,13 +483,13 @@ L6208(uint8_t flag_and_enable_pin, uint8_t reset_pin, uint8_t direction_pin, uin
      */
     virtual void wait_while_active(void)
     {
-        L6208_WaitWhileActive();
-    }  
+      L6208_WaitWhileActive();
+    }
 
     /**
      * @brief Public functions NOT inherited
      */
-     
+
     /**
      * @brief  Attaching an error handler.
      * @param  fptr An error handler.
@@ -515,28 +497,25 @@ L6208(uint8_t flag_and_enable_pin, uint8_t reset_pin, uint8_t direction_pin, uin
      */
     virtual void attach_error_handler(void (*fptr)(uint16_t error))
     {
-        L6208_AttachErrorHandler((void (*)(uint16_t error)) fptr);
+      L6208_AttachErrorHandler((void (*)(uint16_t error)) fptr);
     }
 
     /**
-     * @brief  Checks if the device is disabled or/and has an alarm flag set 
+     * @brief  Checks if the device is disabled or/and has an alarm flag set
      * by reading the EN pin position.
      * @param  None.
-     * @retval One if the EN pin is low (the device is disabled or/and 
+     * @retval One if the EN pin is low (the device is disabled or/and
      * has an alarm flag set), otherwise zero.
      */
     virtual unsigned int check_status_hw(void)
     {
-        if (!(((uint16_t)digitalRead(flag_and_enable))))
-        {
-            return 0x01;
-        }
-        else
-        {
-            return 0x00;
-        }
+      if (!(((uint16_t)digitalRead(flag_and_enable)))) {
+        return 0x01;
+      } else {
+        return 0x00;
+      }
     }
-    
+
     /**
      * @brief  Disabling the device.
      * @param  None.
@@ -544,9 +523,9 @@ L6208(uint8_t flag_and_enable_pin, uint8_t reset_pin, uint8_t direction_pin, uin
      */
     virtual void disable(void)
     {
-        L6208_Disable();
+      L6208_Disable();
     }
-    
+
     /**
      * @brief  Enabling the device.
      * @param  None.
@@ -554,9 +533,9 @@ L6208(uint8_t flag_and_enable_pin, uint8_t reset_pin, uint8_t direction_pin, uin
      */
     virtual void enable(void)
     {
-        L6208_Enable();
+      L6208_Enable();
     }
-    
+
     /**
      * @brief  Getting the motor decay mode.
      * @param  None.
@@ -564,19 +543,19 @@ L6208(uint8_t flag_and_enable_pin, uint8_t reset_pin, uint8_t direction_pin, uin
      */
     virtual motorDecayMode_t get_decay_mode()
     {
-         return L6208_get_decay_mode();
+      return L6208_get_decay_mode();
     }
-    
+
     /**
      * @brief  Set the frequency of the VREFA and VREFB PWM
      * @param  frequency in Hz
      * @retval None.
-     */  
+     */
     virtual uint32_t get_freq_vref_pwm(void)
     {
-        return L6208_VrefPwmGetFreq();
-    }    
-    
+      return L6208_VrefPwmGetFreq();
+    }
+
     /**
      * @brief  Getting the version of the firmware.
      * @param  None.
@@ -584,9 +563,9 @@ L6208(uint8_t flag_and_enable_pin, uint8_t reset_pin, uint8_t direction_pin, uin
      */
     virtual unsigned int get_fw_version(void)
     {
-        return (unsigned int) L6208_GetFwVersion();
+      return (unsigned int) L6208_GetFwVersion();
     }
-    
+
     /**
      * @brief  Getting the motor step mode.
      * @param  None.L6208_Board_Disable
@@ -596,17 +575,17 @@ L6208(uint8_t flag_and_enable_pin, uint8_t reset_pin, uint8_t direction_pin, uin
     {
       return (step_mode_t) L6208_GetStepMode();
     }
-    
+
     /**
      * @brief  Getting the motor stop mode.
      * @param  None.
      * @retval The motor stop mode.
-     */  
+     */
     virtual motorStopMode_t get_stop_mode(void)
     {
       return L6208_GetStopMode();
     }
-    
+
     /**
      * @brief  Going to a specified position with a specificied direction.
      * @param  direction The desired direction.
@@ -615,17 +594,17 @@ L6208(uint8_t flag_and_enable_pin, uint8_t reset_pin, uint8_t direction_pin, uin
      */
     virtual void go_to(direction_t direction, signed int position)
     {
-        L6208_GoToDir((motorDir_t) (direction == StepperMotor::FWD ? FORWARD : BACKWARD),(int32_t)position);
+      L6208_GoToDir((motorDir_t)(direction == StepperMotor::FWD ? FORWARD : BACKWARD), (int32_t)position);
     }
 
     /**
      * @brief  Release the L6208 reset (Reset pin set to high level).
      * @param  None.
      * @retval None.
-     */    
+     */
     virtual void release_reset(void)
     {
-        L6208_ReleaseReset();
+      L6208_ReleaseReset();
     }
 
     /**
@@ -633,30 +612,30 @@ L6208(uint8_t flag_and_enable_pin, uint8_t reset_pin, uint8_t direction_pin, uin
      * positions and microstep variables.
      * @param  None.
      * @retval None.
-     */    
+     */
     virtual void reset(void)
     {
-        L6208_Reset();
+      L6208_Reset();
     }
-    
+
     /**
      * @brief  Reset the L6208 (Reset pin set to low level).
      * @param  None.
      * @retval None.
-     */    
+     */
     virtual void reset_device(void)
     {
-        L6208_ResetDevice();
+      L6208_ResetDevice();
     }
-   
+
     /**
      * @brief  Set the motor decay mode.
      * @param  decayMode The desired decay mode (SLOW_DECAY or FAST_DECAY).
      * @retval None.
-     */    
+     */
     virtual void set_decay_mode(motorDecayMode_t decayMode)
     {
-        L6208_SetDecayMode(decayMode);
+      L6208_SetDecayMode(decayMode);
     }
 
     /**
@@ -665,46 +644,46 @@ L6208(uint8_t flag_and_enable_pin, uint8_t reset_pin, uint8_t direction_pin, uin
      * @retval None.
      */
     virtual void set_direction(direction_t direction)
-    { 
-        L6208_SetDirection((motorDir_t) (direction == StepperMotor::FWD ? FORWARD : BACKWARD));
+    {
+      L6208_SetDirection((motorDir_t)(direction == StepperMotor::FWD ? FORWARD : BACKWARD));
     }
 
     /**
      * @brief  Set the frequency of the VREFA and VREFB PWM
      * @param  frequency in Hz
      * @retval None.
-     */  
+     */
     virtual void set_freq_vref_pwm(uint32_t frequency)
     {
-        L6208_VrefPwmSetFreq(frequency);
+      L6208_VrefPwmSetFreq(frequency);
     }
 
     /**
      * @brief  Set the motor stop mode.
      * @param  stopMode The desired stop mode (HOLD_MODE or HIZ_MODE).
      * @retval None.
-     */       
+     */
     virtual void set_stop_mode(motorStopMode_t stopMode)
     {
-        L6208_SetStopMode(stopMode);
+      L6208_SetStopMode(stopMode);
     }
-   
+
     /*** Public Interrupt Related Methods ***/
-        /**
-     * @brief  Attaching an interrupt handler to the FLAG interrupt.
-     * @param  fptr An interrupt handler.
-     * @retval None.
-     */
-     void attach_flag_irq(void (*fptr)(void))
+    /**
+    * @brief  Attaching an interrupt handler to the FLAG interrupt.
+    * @param  fptr An interrupt handler.
+    * @retval None.
+    */
+    void attach_flag_irq(void (*fptr)(void))
     {
-        int_cb = fptr;
+      int_cb = fptr;
     }
     void enable_flag_irq(void)
     {
-        pinMode(flag_and_enable, INPUT);
-        attachInterrupt(flag_and_enable, int_cb, FALLING);
+      pinMode(flag_and_enable, INPUT);
+      attachInterrupt(flag_and_enable, int_cb, FALLING);
     }
-    protected:
+  protected:
 
     /*** Protected Component Related Methods ***/
 
@@ -726,17 +705,17 @@ L6208(uint8_t flag_and_enable_pin, uint8_t reset_pin, uint8_t direction_pin, uin
     motorState_t L6208_GetMotionState(void);
     int32_t L6208_GetPosition(void);
     motorStepMode_t L6208_GetStepMode(void);
-    motorStopMode_t L6208_GetStopMode(void);    
-    void L6208_GoHome(void);  
+    motorStopMode_t L6208_GetStopMode(void);
+    void L6208_GoHome(void);
     void L6208_GoMark(void);
     void L6208_GoTo(int32_t targetPosition);
-    void L6208_GoToDir(motorDir_t direction, int32_t targetPosition);   
+    void L6208_GoToDir(motorDir_t direction, int32_t targetPosition);
     void L6208_HardHiZ(void);
     void L6208_HardStop(void);
     void L6208_Move(motorDir_t direction, uint32_t stepCount);
     void L6208_ReleaseReset(void);
     void L6208_Reset(void);
-    void L6208_ResetDevice(void);  
+    void L6208_ResetDevice(void);
     void L6208_Run(motorDir_t direction);
     bool L6208_SetAcceleration(uint16_t newAcc);
     void L6208_SetDecayMode(motorDecayMode_t decayMode);
@@ -747,17 +726,17 @@ L6208(uint8_t flag_and_enable_pin, uint8_t reset_pin, uint8_t direction_pin, uin
     void L6208_SetMark(void);
     void L6208_SetMark(int32_t markPos);
     bool L6208_SetMaxSpeed(uint16_t volatile newSpeed);
-    bool L6208_SetMinSpeed(uint16_t volatile newSpeed);    
+    bool L6208_SetMinSpeed(uint16_t volatile newSpeed);
     bool L6208_SetStepMode(motorStepMode_t stepMode);
-    void L6208_SetStopMode(motorStopMode_t stopMode);    
+    void L6208_SetStopMode(motorStopMode_t stopMode);
     bool L6208_SoftStop(void);
     void L6208_TickHandler(void);
     uint32_t L6208_VrefPwmGetFreq(void);
     void L6208_VrefPwmSetFreq(uint32_t newFreq);
     void L6208_WaitWhileActive(void);
-    
+
     /*** Functions intended to be used only internally ***/
-    
+
     void L6208_ClearSysFlag(uint32_t mask);
     uint32_t L6208_ComputeNbAccOrDecSteps(uint16_t accOrDecRate);
     uint16_t L6208_ConvertAcceDecelRateValue(uint16_t newAccOrDecRate);
@@ -770,7 +749,7 @@ L6208(uint8_t flag_and_enable_pin, uint8_t reset_pin, uint8_t direction_pin, uin
     void L6208_ResetSteps(void);
     uint32_t L6208_ScaleWaveformSample(uint8_t sampleIndex);
     void L6208_ScaleWaveformTable(void);
-    void L6208_SetDeviceParamsToGivenValues(l6208_init_t* pInitDevicePrm);
+    void L6208_SetDeviceParamsToGivenValues(l6208_init_t *pInitDevicePrm);
     void L6208_SetDeviceParamsToPredefinedValues(void);
     void L6208_SetMicrostepSample2Scale(uint8_t value);
     void L6208_SetMicrostepSample2Update(uint8_t value);
@@ -783,17 +762,17 @@ L6208(uint8_t flag_and_enable_pin, uint8_t reset_pin, uint8_t direction_pin, uin
     bool L6208_VectorCalc(uint8_t newTorque);
     bool L6208_VrefPwmComputePulseWidth(uint8_t bridgeId, uint16_t value, bool valueIsPwmDutyCycle);
     void L6208_VrefPwmUpdatePulseWidth(void);
-    
+
     /*** Component's I/O Methods ***/
-      /**
-     * @brief  Reset the clock pin.
-     * @param  None.
-     * @retval None.
-     */    
+    /**
+    * @brief  Reset the clock pin.
+    * @param  None.
+    * @retval None.
+    */
     void L6208_Board_CLOCK_PIN_Reset(void)
     {
-        digitalWrite(clock_pin, 0);
-    }    
+      digitalWrite(clock_pin, 0);
+    }
     /**
      * @brief  Set the clock pin.
      * @param  None.
@@ -801,7 +780,7 @@ L6208(uint8_t flag_and_enable_pin, uint8_t reset_pin, uint8_t direction_pin, uin
      */
     void L6208_Board_CLOCK_PIN_Set(void)
     {
-        digitalWrite(clock_pin, 1);
+      digitalWrite(clock_pin, 1);
 
     }
 
@@ -812,7 +791,7 @@ L6208(uint8_t flag_and_enable_pin, uint8_t reset_pin, uint8_t direction_pin, uin
      */
     void L6208_Board_CONTROL_PIN_Set(void)
     {
-        digitalWrite(control_pin,1);
+      digitalWrite(control_pin, 1);
     }
 
     /**
@@ -822,10 +801,10 @@ L6208(uint8_t flag_and_enable_pin, uint8_t reset_pin, uint8_t direction_pin, uin
      */
     void L6208_Board_CONTROL_PIN_Reset(void)
     {
-        digitalWrite(control_pin,0);
+      digitalWrite(control_pin, 0);
     }
 
-        
+
     /**
      * @brief  Making the CPU wait.
      * @param  None.
@@ -833,18 +812,18 @@ L6208(uint8_t flag_and_enable_pin, uint8_t reset_pin, uint8_t direction_pin, uin
      */
     void L6208_Board_Delay(uint32_t ms_delay)
     {
-        delay(ms_delay);
+      delay(ms_delay);
     }
-        /**
-     * @brief  Reset the dir pin.
-     * @param  None.
-     * @retval None.
-     */
+    /**
+    * @brief  Reset the dir pin.
+    * @param  None.
+    * @retval None.
+    */
     void L6208_Board_DIR_PIN_Reset(void)
     {
-        digitalWrite(direction_pin, 0);
+      digitalWrite(direction_pin, 0);
     }
-        
+
     /**
      * @brief  Set the dir pin.
      * @param  None.
@@ -852,9 +831,9 @@ L6208(uint8_t flag_and_enable_pin, uint8_t reset_pin, uint8_t direction_pin, uin
      */
     void L6208_Board_DIR_PIN_Set(void)
     {
-        digitalWrite(direction_pin, 1);
+      digitalWrite(direction_pin, 1);
     }
-    
+
     /**
      * @brief  Disable the power bridges (leave the output bridges HiZ).
      * @param  None.
@@ -862,9 +841,9 @@ L6208(uint8_t flag_and_enable_pin, uint8_t reset_pin, uint8_t direction_pin, uin
      */
     void L6208_Board_Disable(void)
     {
-        detachInterrupt(flag_and_enable);
-        pinMode(flag_and_enable,OUTPUT);
-        digitalWrite(flag_and_enable, LOW);
+      detachInterrupt(flag_and_enable);
+      pinMode(flag_and_enable, OUTPUT);
+      digitalWrite(flag_and_enable, LOW);
     }
 
     /**
@@ -873,27 +852,27 @@ L6208(uint8_t flag_and_enable_pin, uint8_t reset_pin, uint8_t direction_pin, uin
      * @retval None.
      */
     void L6208_Board_Enable(void)
-    {     
-        pinMode(flag_and_enable,OUTPUT);
-        digitalWrite(flag_and_enable, HIGH);
-        delay(10);
-        pinMode(flag_and_enable, INPUT_PULLUP);
-        /* clearPendingInterrupt is not an official stm32duino API yet */
-        /* so we need to keep it commented at the moment               */
-        // clearPendingInterrupt(flag_and_enable);
-        attachInterrupt(flag_and_enable, int_cb, FALLING);
+    {
+      pinMode(flag_and_enable, OUTPUT);
+      digitalWrite(flag_and_enable, HIGH);
+      delay(10);
+      pinMode(flag_and_enable, INPUT_PULLUP);
+      /* clearPendingInterrupt is not an official stm32duino API yet */
+      /* so we need to keep it commented at the moment               */
+      // clearPendingInterrupt(flag_and_enable);
+      attachInterrupt(flag_and_enable, int_cb, FALLING);
     }
 
-        /**
-     * @brief  Reset the half full pin.
-     * @param  None.
-     * @retval None.
-     */
+    /**
+    * @brief  Reset the half full pin.
+    * @param  None.
+    * @retval None.
+    */
     void L6208_Board_HALF_FULL_PIN_Reset(void)
     {
-        digitalWrite(half_full_pin,0);
+      digitalWrite(half_full_pin, 0);
     }
-    
+
     /**
      * @brief  Set the half full pin.
      * @param  None.
@@ -901,7 +880,7 @@ L6208(uint8_t flag_and_enable_pin, uint8_t reset_pin, uint8_t direction_pin, uin
      */
     void L6208_Board_HALF_FULL_PIN_Set(void)
     {
-        digitalWrite(half_full_pin,1);
+      digitalWrite(half_full_pin, 1);
     }
 
     /**
@@ -911,10 +890,10 @@ L6208(uint8_t flag_and_enable_pin, uint8_t reset_pin, uint8_t direction_pin, uin
      */
     void L6208_Board_VrefPwmInit(uint8_t bridgeId, uint32_t pwmFreq)
     {
-        (void)bridgeId;
-        (void)pwmFreq;
+      (void)bridgeId;
+      (void)pwmFreq;
     }
-        
+
     /**
      * @brief  Exit the device from reset mode.
      * @param  None.
@@ -922,7 +901,7 @@ L6208(uint8_t flag_and_enable_pin, uint8_t reset_pin, uint8_t direction_pin, uin
      */
     void L6208_Board_ReleaseReset(void)
     {
-        digitalWrite(reset_pin,1);
+      digitalWrite(reset_pin, 1);
     }
 
     /**
@@ -932,17 +911,17 @@ L6208(uint8_t flag_and_enable_pin, uint8_t reset_pin, uint8_t direction_pin, uin
      */
     void L6208_Board_Reset(void)
     {
-        digitalWrite(reset_pin,0);
+      digitalWrite(reset_pin, 0);
     }
 
     /**
      * @brief  Get the tick timer frequency in Hz.
      * @param  None.
      * @retval The tick timer frequency in Hz.
-     */    
+     */
     uint32_t L6208_Board_TickGetFreq(void)
     {
-       return TIMER_TICK_FREQUENCY;
+      return TIMER_TICK_FREQUENCY;
     }
 
 
@@ -962,11 +941,11 @@ L6208(uint8_t flag_and_enable_pin, uint8_t reset_pin, uint8_t direction_pin, uin
      */
     void L6208_Board_TickStart(uint16_t frequency)
     {
-        /* Attaching a tick handler function which updates */
-        /* the state machine every elapsed period time. */
-        ticker->setOverflow(frequency, HERTZ_FORMAT);
-        ticker->attachInterrupt(callback_handler);
-        ticker->resume();
+      /* Attaching a tick handler function which updates */
+      /* the state machine every elapsed period time. */
+      ticker->setOverflow(frequency, HERTZ_FORMAT);
+      ticker->attachInterrupt(callback_handler);
+      ticker->resume();
     }
 
     /**
@@ -977,38 +956,35 @@ L6208(uint8_t flag_and_enable_pin, uint8_t reset_pin, uint8_t direction_pin, uin
     void L6208_Board_TickStop(void)
     {
 
-        ticker->pause();
-        ticker->detachInterrupt();
+      ticker->pause();
+      ticker->detachInterrupt();
     }
 
     bool L6208_Board_VrefPwmSetDutyCycle(uint8_t bridgeId, uint16_t value, bool valueIsPwmDutyCycle)
-	{
-        if (bridgeId == 0)
-        {
-            if(valueIsPwmDutyCycle)
-            {
-                if (value > 100) value = 100;
-                value = (((uint32_t)(vrefA_pwm_timer->getHandle())->Init.Period * (uint32_t)value) / 100);    
-            }
-
-            vrefA_pwm_timer->setCaptureCompare( vrefA_pwm_channel , value, TICK_COMPARE_FORMAT);
-        } 
-        else if (bridgeId == 1)
-        {
-            if(valueIsPwmDutyCycle)
-            {
-                if (value > 100) value = 100;
-                value = (((uint32_t)(vrefB_pwm_timer->getHandle())->Init.Period * (uint32_t)value) / 100);    
-            }
-
-            vrefB_pwm_timer->setCaptureCompare( vrefB_pwm_channel , value, TICK_COMPARE_FORMAT);
-        }
-        else
-        {
-            return false;
+    {
+      if (bridgeId == 0) {
+        if (valueIsPwmDutyCycle) {
+          if (value > 100) {
+            value = 100;
+          }
+          value = (((uint32_t)(vrefA_pwm_timer->getHandle())->Init.Period * (uint32_t)value) / 100);
         }
 
-        return true;
+        vrefA_pwm_timer->setCaptureCompare(vrefA_pwm_channel, value, TICK_COMPARE_FORMAT);
+      } else if (bridgeId == 1) {
+        if (valueIsPwmDutyCycle) {
+          if (value > 100) {
+            value = 100;
+          }
+          value = (((uint32_t)(vrefB_pwm_timer->getHandle())->Init.Period * (uint32_t)value) / 100);
+        }
+
+        vrefB_pwm_timer->setCaptureCompare(vrefB_pwm_channel, value, TICK_COMPARE_FORMAT);
+      } else {
+        return false;
+      }
+
+      return true;
     }
 
 
@@ -1022,76 +998,64 @@ L6208(uint8_t flag_and_enable_pin, uint8_t reset_pin, uint8_t direction_pin, uin
      * @retval "true" in case of success, "false" otherwise.
      * @note the unit is 1/256th of a microsecond. The VREFA PWM must be started
      * before the VREFB PWM.
-     */   
+     */
     bool L6208_Board_VrefPwmStart(uint8_t bridgeId, uint32_t pwmFreq)
     {
-        /* Setting the period and the duty-cycle of PWM. */
-        if (bridgeId == 0)
-        {
-            vrefA_pwm_timer ->setOverflow(pwmFreq, HERTZ_FORMAT);
-            vrefA_pwm_timer->resume();
-        }
-        else if (bridgeId == 1)
-        {
-            vrefB_pwm_timer ->setOverflow(pwmFreq, HERTZ_FORMAT);
-            vrefB_pwm_timer->resume();
-        }
-        else
-        {
-            return false;
-        }
-        return true;
+      /* Setting the period and the duty-cycle of PWM. */
+      if (bridgeId == 0) {
+        vrefA_pwm_timer ->setOverflow(pwmFreq, HERTZ_FORMAT);
+        vrefA_pwm_timer->resume();
+      } else if (bridgeId == 1) {
+        vrefB_pwm_timer ->setOverflow(pwmFreq, HERTZ_FORMAT);
+        vrefB_pwm_timer->resume();
+      } else {
+        return false;
+      }
+      return true;
     }
-    
+
     /**
      * @brief  Stop the timer for the VREFA or VREFB PWM.
      * @param[in] bridgeId
      *            0 for BRIDGE_A
      *            1 for BRIDGE_B
      * @retval "true" in case of success, "false" otherwise.
-     */       
+     */
     bool L6208_Board_VrefPwmStop(uint8_t bridgeId)
     {
-        if (bridgeId == 0)
-        {
-            //HAL_TIM_PWM_Stop(vrefA_pwm_timer->getHandle(), vrefA_pwm_channel);
-            vrefA_pwm_timer->pause();			
-        }
-        else if (bridgeId == 1)
-        {
-            //HAL_TIM_PWM_Stop(vrefB_pwm_timer->getHandle(), vrefB_pwm_channel);
-            vrefB_pwm_timer->pause();			
-        }
-        else
-        {
-            return false;
-        }
+      if (bridgeId == 0) {
+        vrefA_pwm_timer->pause();
+      } else if (bridgeId == 1) {
+        vrefB_pwm_timer->pause();
+      } else {
+        return false;
+      }
 
-        return true;
+      return true;
     }
 
-protected:
+  protected:
 
 
     /*** Component's Instance Variables ***/
-  /* Flag Interrupt. */
+    /* Flag Interrupt. */
     uint8_t flag_and_enable;
     void (*int_cb)(void);
-                                                                                                             
-                                                                                                                                                         
+
+
 
     /* RESET pin. */
     uint8_t reset_pin;
     /* CW_CCW pin. */
     uint8_t direction_pin;
-     /* HALF_FULL pin */
+    /* HALF_FULL pin */
     uint8_t  half_full_pin;
     /* CONTROL pin */
     uint8_t  control_pin;
     /* CLOCK pin */
     uint8_t clock_pin;
 
-     /* Pulse Width Modulation pin for VREFA pin */
+    /* Pulse Width Modulation pin for VREFA pin */
     HardwareTimer *vrefA_pwm_timer;
     uint32_t vrefA_pwm_channel;
     uint8_t vrefA_pwm;
@@ -1102,11 +1066,11 @@ protected:
     uint32_t vrefB_pwm_channel;
     uint8_t vrefB_pwm;
     TIM_TypeDef *ticker_instance;
-    
-    
-    HardwareTimer *ticker; 
+
+
+    HardwareTimer *ticker;
     TickHandler_Callback callback_handler;
-    
+
     /* Identity */
     uint8_t who_am_i;
 
@@ -1116,15 +1080,15 @@ protected:
     uint8_t deviceInstance;
     uint32_t tickFreq;
     /// microstepping PWM period and torque scaled waveform samples array
-    uint16_t updatedMicroTable[L6208_USTEPS_PER_QUARTER_PERIOD+1];
+    uint16_t updatedMicroTable[L6208_USTEPS_PER_QUARTER_PERIOD + 1];
     /// waveform scanning microstepping PWM period sample arrays for VREFA wave
-    uint16_t microTable1[L6208_USTEPS_PER_QUARTER_PERIOD*3+1];
+    uint16_t microTable1[L6208_USTEPS_PER_QUARTER_PERIOD * 3 + 1];
     /// waveform scanning microstepping PWM period sample array for VREFB wave
     uint16_t *pMicroTable2;
 
     /* Static data. */
     static uint8_t numberOfDevices;
-    static const uint16_t RefMicroTable[L6208_USTEPS_PER_QUARTER_PERIOD*3];
+    static const uint16_t RefMicroTable[L6208_USTEPS_PER_QUARTER_PERIOD * 3];
 };
 
 #endif // __L6208_CLASS_H
