@@ -1,0 +1,127 @@
+#######################################
+# Syntax Coloring Map For X-NUCLEO-IHM05A1
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+Component	KEYWORD1
+L6208	KEYWORD1
+StepperMotor	KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
+init	KEYWORD2
+read_id	KEYWORD2
+get_position	KEYWORD2
+get_mark	KEYWORD2
+get_speed	KEYWORD2
+get_max_speed	KEYWORD2
+get_min_speed	KEYWORD2
+get_acceleration	KEYWORD2
+get_deceleration	KEYWORD2
+get_direction	KEYWORD2
+set_home	KEYWORD2
+set_mark	KEYWORD2
+set_max_speed	KEYWORD2
+set_min_speed	KEYWORD2
+set_acceleration	KEYWORD2
+set_deceleration	KEYWORD2
+set_step_mode	KEYWORD2
+got_to	KEYWORD2
+go_home	KEYWORD2
+go_mark	KEYWORD2
+run	KEYWORD2
+move	KEYWORD2
+soft_stop	KEYWORD2
+hard_stop	KEYWORD2
+soft_hiz	KEYWORD2
+hard_hiz	KEYWORD2
+wait_while_active	KEYWORD2
+attach_error_handler	KEYWORD2
+check_status_hw	KEYWORD2
+disable	KEYWORD2
+enable	KEYWORD2
+get_decay_mode	KEYWORD2
+get_freq_vref_pwm	KEYWORD2
+get_fw_version	KEYWORD2
+get_step_mode	KEYWORD2
+get_stop_mode	KEYWORD2
+go_to	KEYWORD2
+release_reset	KEYWORD2
+reset	KEYWORD2
+reset_device	KEYWORD2
+set_decay_mode	KEYWORD2
+set_direction	KEYWORD2
+set_freq_vref_pwm	KEYWORD2
+set_stop_mode	KEYWORD2
+attach_flag_irq	KEYWORD2
+
+#######################################
+# Constants (LITERAL1)
+#######################################
+
+L6208_CONF_PARAM_ACC_RATE	LITERAL1
+L6208_CONF_PARAM_ACC_CURRENT	LITERAL1
+L6208_CONF_PARAM_DEC_RATE	LITERAL1
+L6208_CONF_PARAM_DEC_CURRENT	LITERAL1
+L6208_CONF_PARAM_RUNNING_SPEED	LITERAL1
+L6208_CONF_PARAM_RUNNING_CURRENT	LITERAL1
+L6208_CONF_PARAM_HOLDING_CURRENT	LITERAL1
+L6208_CONF_PARAM_STEP_MODE	LITERAL1
+L6208_CONF_PARAM_DECAY_MODE	LITERAL1
+L6208_CONF_PARAM_DWELL_TIME	LITERAL1
+L6208_CONF_PARAM_AUTO_HIZ_STOP	LITERAL1
+L6208_CONF_VREF_PWM_FREQUENCY	LITERAL1
+L6208_FW_MAJOR_VERSION	LITERAL1
+L6208_FW_MINOR_VERSION	LITERAL1
+L6208_FW_PATCH_VERSION	LITERAL1
+L6208_FW_VERSION	LITERAL1
+L6208_SINE_WAVEFORM_POWER_OF_TWO_MAX_VALUE	LITERAL1 
+TIMER_TICK_FREQUENCY	LITERAL1
+BRIDGE_TURN_ON_DELAY	LITERAL1
+MAX_NUMBER_OF_DEVICES	LITERAL1
+L6208_MAX_POSITION	LITERAL1
+L6208_MIN_POSITION	LITERAL1
+L6208_POSITION_RANGE	LITERAL1
+L6208_USTEPS_PER_QUARTER_PERIOD	LITERAL1
+L6208_MIN_SPEED	LITERAL1
+L6208_MIN_ACC_DEC_RATE	LITERAL1
+L6208_FAST_DECAY_MODE_MASK	LITERAL1
+L6208_ERROR_BASE	LITERAL1
+BRIDGE_A 	LITERAL1
+BRIDGE_B 	LITERAL1
+EN_A_set 	LITERAL1
+HiZstop 	LITERAL1
+busy  	LITERAL1
+running  	LITERAL1
+velocitymode	LITERAL1
+positionmode  	LITERAL1
+fullstep 	LITERAL1
+halfstep 	LITERAL1
+microstep 	LITERAL1
+forward  	LITERAL1
+dir2change 	LITERAL1
+fastdecaymode 	LITERAL1
+wavestep 	LITERAL1
+FALSE 	LITERAL1
+TRUE	LITERAL1
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
