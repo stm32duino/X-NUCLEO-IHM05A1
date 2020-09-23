@@ -678,6 +678,12 @@ class L6208 : public StepperMotor {
     {
       int_cb = fptr;
     }
+
+    /**
+    * @brief  Enable the FLAG interrupt.
+    * @param  None.
+    * @retval None.
+    */
     void enable_flag_irq(void)
     {
       pinMode(flag_and_enable, INPUT);
