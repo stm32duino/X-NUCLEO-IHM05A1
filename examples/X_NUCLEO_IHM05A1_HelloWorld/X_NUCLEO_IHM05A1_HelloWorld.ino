@@ -344,8 +344,8 @@ void setup()
   motor->run(StepperMotor::FWD);
   delay(5000);
 
-  /* Request to immediatly stop */
-  SerialPort.println("immediatly stop.");
+  /* Request to immediately stop */
+  SerialPort.println("immediately stop.");
   motor->hard_stop();
   motor->wait_while_active();
 

@@ -124,7 +124,7 @@ status_t L6208::L6208_ReadID(uint8_t *id)
  * The call back will be then called each time the library
  * detects an error
  * @param[in] callback Name of the callback to attach
- * to the error Hanlder
+ * to the error Handler
  * @retval None
  **********************************************************/
 void L6208::L6208_AttachErrorHandler(void (*callback)(uint16_t error))
@@ -286,7 +286,7 @@ motorState_t L6208::L6208_GetMotionState(void)
 
 /******************************************************//**
  * @brief Get the current position (32b signed)
- * @retval current absoulte position
+ * @retval current absolute position
  **********************************************************/
 int32_t L6208::L6208_GetPosition(void)
 {
@@ -1621,7 +1621,7 @@ void L6208::L6208_UstepWaveformHandling(void)
     /* Set the number of samples to update */
     L6208_SetMicrostepSample2Update(L6208_USTEPS_PER_QUARTER_PERIOD);
 
-    /* Reset the number of samples to rescaled afer rescaling */
+    /* Reset the number of samples to rescaled after rescaling */
     L6208_SetMicrostepSample2Scale(0);
   }
 }
