@@ -1,4 +1,4 @@
-v87/**
+/**
  ******************************************************************************
  * @file    L6208.h
  * @author  IPC Rennes
@@ -168,7 +168,7 @@ class L6208 : public StepperMotor {
 
     /**
      * @brief  Initialize the component.
-     * @param  init Pointer to device specific initalization structure.
+     * @param  init Pointer to device specific initialization structure.
      * @retval "0" in case of success, an error code otherwise.
      */
 
@@ -587,7 +587,7 @@ class L6208 : public StepperMotor {
     }
 
     /**
-     * @brief  Going to a specified position with a specificied direction.
+     * @brief  Going to a specified position with a specified direction.
      * @param  direction The desired direction.
      * @param  position The desired position.
      * @retval None.
